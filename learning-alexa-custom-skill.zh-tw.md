@@ -32,19 +32,19 @@ Invocation name 是用來對映 skill 用的，也就是告訴 Alexa，使用者
 
 我們繼續拆解喚醒 OurGroceries skill 句子，看看除了 invocation name 之外還有什麼，首先再看一次它如何在購物清單上增加商品：
 
-"Alexa, tell OurGroceries to remove olive oil from Walmart"
+*"Alexa, tell OurGroceries to remove olive oil from Walmart"*
 
 它可以拆成這些部分：
 
-  - Wake word(喚醒詞) - Alexa
-  - **Invocation name**(喚醒詞) - OurGroceries
-  - Invocation phrase(喚醒語句) - tell ... to ...
-  - **Intent**(意圖) - remove olive oil from Walmart
-  - **Slot**：其中 intent 中又包含一個 slot - Walmart
+ - Wake word（喚醒詞） - Alexa
+ - **Invocation name**（喚醒詞） - OurGroceries
+ - Invocation phrase（喚醒語句） - tell ... to ...
+ - **Intent**（意圖） - remove olive oil from Walmart
+ - **Slot**：其中 intent 中又包含一個 slot - Walmart
   
-粗體字的 **Invocation name**、**Intent** 與 **Slot** 是 Alexa Skill 的專有名詞，其中 Intent 與 Slot 是組成一個 Skill 的重點。
+粗體字的 **Invocation name**、**Intent** 與 **Slot** 是 Alexa Skill 的專有名詞，其中 **Intent** 與 **Slot** 是組成一個 Skill 的重點。
 
-#### Invocation phrase
+### Invocation phrase
 
 喚醒語句是整個句型的結構，對使用者來說，要說出一個要求當然可能有非常多種句型、連接詞的組合，例如:
 
@@ -59,11 +59,40 @@ Invocation name 是用來對映 skill 用的，也就是告訴 Alexa，使用者
 
 更完整的介紹可以看 [Understanding How Users Invoke Custom Skills](https://developer.amazon.com/docs/custom-skills/understanding-how-users-invoke-custom-skills.html)
 
-#### Utterances 與 Intent 
+### Intent 與 Sample Utterances
 
-Intent 是
+Intent（意圖）是整個 Alexa Skill 最重要的一個腳色，也是 Alexa 表現語音辨識人工智慧裡面最「智慧」的元素。一般在對話中，最重要的就是了解對方「想幹嘛」，而 Intent 就是用來描述「想幹嘛」。我們再來看一次 OurGroceries 的三句話：
 
+ - *"Alexa, tell OurGroceries to remove olive oil from Walmart"*
+ - *"Alexa, ask OurGroceries to add milk to shopping list"*
+ - *"Alexa, ask OurGroceries what are my lists"*
 
+這三句話剛好代表三個不同的 Intent。甚至可以套用到應用程式常見的 crud 操作來思考，剛好是對購物清單做：移除、新增、與查詢。知道使用者想做什麼，離我們可以開始實作就不遠了。
 
+回頭想想 invocation phrase，它支援那麼多種「說法」，卻都只為了做同一件事，原因當然是因為自然語言是含糊的，而且一個意思可以有很多種不同說法。在單一個 skill 裡面要支援一個 intent 也必須考慮使用者可能會用各種說法來表達相同的 intent，所以其實 intent 不會只對映一個 utterance，而是一堆 sample utterances，越多越好。官方是建議盡量找出所有可能的說法，寧多勿少。以 OurGroceries 的查詢購物清單為例，它網站雖然只寫了一句 *"what are my lists"*，但這肯定是因為版面有限沒寫出來，可以想見，使用者想查詢購物清單，以下這些說法它可能都支援：
 
+ - *"what are my shopping lists"*
+ - *"show my lists"*
+ - *"tell me the current shopping lists"*
+ 
+ 這三句話，就是「查詢購物清單」intent 的三個 Sample Utterances。
+ 
+### Slots
 
+Slots 是 Intent 的一部分，可以根據使用者所說不同的詞彙填入不同的東西，像 OurGroceries 的 *"add milk to shopping list"*，其實是一個這樣的句型：
+
+*"add ... to shopping list"*
+
+可以代換不同的東西，來加入到購物清單，更具體一點來說當然是某種商品，像是 paper, cake, iphone 之類的。因此這句型更像是：
+
+*"add {product} to shopping list"*
+
+這 *{product}* 就是讓使用者填空的東西，組合起來就是完整的 intent：使用者想要將什麼 {product} 加進購物清單中。
+
+### 組合成 Custom Skill
+
+以上，由 sample utterances 對映到 intent，也就是使用者所說的話，Alexa 會幫我們轉為使用者的意圖（intent）。接著再由一個或多個 intents 組合起來，就幾乎可以組合為一個 custom skill 了，就只差寫程式去處理 intent，然後再 render 出回應、說給使用者聽。
+
+接下來我們看看一個範例，可以了解如何實作出一個 custom skill。
+
+[Next: Custom Skill 範例](custom-skill-example-bill-man.zh-tw.md)
