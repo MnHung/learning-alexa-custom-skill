@@ -28,8 +28,40 @@ Alexa Skills 分為好幾種：Custom Skill、Smart Home Skill、Flash Briefing 
 
 ### Invocation Name
 
-Invocation name 是用來對映 skill 用的，也就是告訴 Alexa，使用者說出的要求應當交給哪一個 skill 來處理。以 [Alexa Skills](https://www.amazon.com/b?node=13727921011) 上面幾個熱門的 skill 來看，喚醒 [Sleep Sounds: Ocean Sounds](https://www.amazon.com/gp/product/B071KYWH2L?ref=skillrw_dsk_tes_gw_8) 的句子是：*"Alexa, open Ocean Sounds"*；指示 [OurGroceries](https://www.amazon.com/HeadCode-OurGroceries/dp/B01D4F1J0M/ref=lp_14284822011_1_2?s=digital-skills&ie=UTF8&qid=1512461485&sr=1-2) 變更購物清單的句子是：*"Alexa, tell OurGroceries to remove olive oil from Walmart"* 或者 *"Alexa, ask OurGroceries to add milk to shopping list"*。這幾句話裡的 *Ocean Sounds* 和 *OurGroceries* 就是兩個 skill 各自的 invocation name，各自對映，我們當然不能 ask Ocean Sounds 去 add milk，Ocean Sounds 很可能根本不會做 *add*，即使它會，意思跟 OurGroceries 的 add 也不一樣，它們是兩個不同的 skill。
+Invocation name 是用來對映 skill 用的，也就是告訴 Alexa，使用者說出的要求應當交給哪一個 skill 來處理。以 [Alexa Skills](https://www.amazon.com/b?node=13727921011) 上面幾個熱門的 skill 來看，喚醒 [Sleep Sounds: Ocean Sounds](https://www.amazon.com/gp/product/B071KYWH2L?ref=skillrw_dsk_tes_gw_8) 的句子是：*"Alexa, open Ocean Sounds"*；喚醒 [OurGroceries](https://www.amazon.com/HeadCode-OurGroceries/dp/B01D4F1J0M/ref=lp_14284822011_1_2?s=digital-skills&ie=UTF8&qid=1512461485&sr=1-2) 並指示它變更購物清單的句子是：*"Alexa, tell OurGroceries to remove olive oil from Walmart"* 或者 *"Alexa, ask OurGroceries to add milk to shopping list"*，還有查詢清單的句子是：*"Alexa, ask OurGroceries what are my lists"*。這幾句話裡的 *Ocean Sounds* 和 *OurGroceries* 就是兩個 skill 各自的 invocation name，各自對映，我們當然不能 ask Ocean Sounds 去 add milk，Ocean Sounds 很可能根本不會做 *add*，即使它會，意思跟 OurGroceries 的 add 也不一樣，它們是兩個不同的 skill。
 
+我們繼續拆解喚醒 OurGroceries skill 句子，看看除了 invocation name 之外還有什麼，首先再看一次它如何在購物清單上增加商品：
+
+"Alexa, tell OurGroceries to remove olive oil from Walmart"
+
+它可以拆成這些部分：
+
+  - Wake word(喚醒詞) - Alexa
+  - **Invocation name**(喚醒詞) - OurGroceries
+  - Invocation phrase(喚醒語句) - tell ... to ...
+  - **Intent**(意圖) - remove olive oil from Walmart
+  - **Slot**：其中 intent 中又包含一個 slot - Walmart
+  
+粗體字的 **Invocation name**、**Intent** 與 **Slot** 是 Alexa Skill 的專有名詞，其中 Intent 與 Slot 是組成一個 Skill 的重點。
+
+#### Invocation phrase
+
+喚醒語句是整個句型的結構，對使用者來說，要說出一個要求當然可能有非常多種句型、連接詞的組合，例如:
+
+- ask...to...
+- ask...for...
+- ask...about...
+- ask...if...
+- tell...to...
+- tell...that...
+
+也可以用非常多種動詞，例如：ask, begin, launch, load, open, start, tell, use...
+
+更完整的介紹可以看 [Understanding How Users Invoke Custom Skills](https://developer.amazon.com/docs/custom-skills/understanding-how-users-invoke-custom-skills.html)
+
+#### Utterances 與 Intent 
+
+Intent 是
 
 
 
