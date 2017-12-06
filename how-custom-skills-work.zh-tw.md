@@ -4,12 +4,12 @@
 
 看看下面的簡單對答，背後是如何達成的呢？
 
-- 使用者說："Alexa, ask Greeter to say Hello"
-- Echo 說："Hello"
+使用者說：*"Alexa, ask Greeter to say Hello"* 
+Echo 說：*"Hello"*
 
 這段對答必須經過這些路徑：
 
-1. Echo 偵測到 wake word: "Alexa"，將語音送往 AVS(Alexa Voice Service)
+1. Echo 偵測到 wake word: "Alexa"，開始將語音送往 AVS(Alexa Voice Service)
 1. AVS 將語音辨識為文字、解析文字，找到 invocation name
 1. 根據 invocation name 找到對映的 Alexa Custom Skill，根據它的 Sample Utterances 解析出 intent 和 slots
 1. 將 intent 以 JSON 格式傳送給 Alexa Custom Skill 的 Service Endpoint，通常是一個 lambda
