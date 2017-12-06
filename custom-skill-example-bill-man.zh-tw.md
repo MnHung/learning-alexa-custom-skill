@@ -59,7 +59,7 @@ AddPaymentIntent I paid {payment} dollar
 
 從 Intent Schema 格式可以看到，Skill 可以包含多個 intent，每個 intent 可以有多個 slot，而每個 slot 都有 name 與 type。這裡 `{payment}` 的 type 採用 `AMAZON.NUMBER`，它是一個內建的 slot type，表示數字。
 
-> 不要小看這個 `AMAZON.NUMBER`，重點不在於它是數字，而是 Alexa 幫我們處理好使用者「怎麼說」這個數字。例如數字 `200`，口語上可以說成 "two hundred"，也可以說成 "two zero zero"，而 Alexa 可以讓使用者不管怎麼說都正確地對應到數字 `200`。有許多[內建的 slot type](https://developer.amazon.com/docs/custom-skills/slot-type-reference.html) 都處理了不少口語上的麻煩事，相當實用。
+> 不要小看這個 `AMAZON.NUMBER`，重點不在於它是數字，而是 Alexa 幫我們處理好使用者「怎麼說」這個數字。例如數字 200，口語上可以說成 "two hundred"，也可以說成 "two zero zero"，而 Alexa 可以讓使用者不管怎麼說都正確地對應到數字 200。有許多[內建的 slot type](https://developer.amazon.com/docs/custom-skills/slot-type-reference.html) 都處理了不少口語上的麻煩事，相當實用。
 
 訂好 Intent，接著要列出 Intent 使用的 **Sample Utterances**，它的格式跟上面寫的是一樣的，Intent 搭配 Utterance，一行一句 Utterance：
 
