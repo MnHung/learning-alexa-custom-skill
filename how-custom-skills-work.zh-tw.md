@@ -22,6 +22,6 @@
 1. 設計 intents、slots 與 Sample Utterances
 2. 實作收到 intent 的 handlers 程式碼
 
-接下來我們看看一個範例，可以了解如何實作出一個 custom skill。
+接下來我們看看一個範例，了解如何實作出一個 custom skill。
 
 [Next: Custom Skill 範例](custom-skill-example-bill-man.zh-tw.md)
