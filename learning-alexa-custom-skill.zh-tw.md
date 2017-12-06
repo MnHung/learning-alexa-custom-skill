@@ -95,4 +95,4 @@ Slots 是 Intent 的一部分，可以根據使用者所說不同的詞彙填入
 
 接下來我們看看一個範例，可以了解如何實作出一個 custom skill。
 
-[Next: Custom Skill 範例](custom-skill-example-bill-man.zh-tw.md)
+[Next: 理解 Custom Skill 如何運作](how-custom-skills-work.zh-tw.md)
