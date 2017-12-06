@@ -93,6 +93,6 @@ Slots 是 Intent 的一部分，可以根據使用者所說不同的詞彙填入
 
 以上，由 sample utterances 對映到 intent，也就是使用者所說的話，Alexa 會幫我們轉為使用者的意圖（intent）。接著再由一個或多個 intents 組合起來，就幾乎可以組合為一個 custom skill 了，就只差寫程式去處理 intent，然後再 render 出回應、說給使用者聽。
 
-接下來我們看看一個範例，可以了解如何實作出一個 custom skill。
+接下來我們看看 Custom Skill 如何運作。
 
 [Next: 理解 Custom Skill 如何運作](how-custom-skills-work.zh-tw.md)
