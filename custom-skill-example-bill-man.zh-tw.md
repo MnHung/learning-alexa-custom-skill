@@ -7,7 +7,7 @@
 首先要先設想對話，記帳的對話可能像這樣子：
 
 *"Alexa, ask Bill Man to add a 200 dollar payment"*  
-*"200 dollar payment added"*
+*"200 dollar payment is added"*
 
 這樣就紀錄了一筆 200 元支出。
 
@@ -41,7 +41,7 @@ AddPaymentIntent I paid {payment} dollar
 
 **Intent Schema** 採用 JSON 格式，記錄了用到的 Intent 與 slot，對記帳的劇本來說，只要照著格式改寫：
 
-```json
+```js
 {
   "intents": [
     {
@@ -96,14 +96,14 @@ exports.handler = function(event, context, callback){
 
 #### 處理 Alexa 所發送的 request
 
-利用 alexa-sdk 所撰寫的 skill code，基本上就像一個事件處理機，運行著，等待著 Alexa 發送的事件，處理完然後回傳結果。總共有三種事件類型：`LaunchRequest`、`IntentRequest` 與 `SessionEndedRequest`。使用者對 Alexa 說的指令屬於 `IntentRequest` 類型。不過在 skill code 內我們不是處理這三個類型，alexa-sdk 會把事件轉成更有意義的名字，我們註冊、處理起來更容易。我們必須處理的事件主要是這四種：
+利用 alexa-sdk 所撰寫的 skill code，基本上就像一個事件處理機，運行著，等待著 Alexa 發送的事件，處理完然後回傳結果。總共有三種事件類型：`LaunchRequest`、`IntentRequest` 與 `SessionEndedRequest`。使用者對 Alexa 說出 Intent 是屬於 `IntentRequest` 類型。不過在 skill code 內我們不直接處理這三個類型，alexa-sdk 會把事件轉成更有意義的名字，我們註冊、處理起來更容易。我們必須處理的事件主要是這四種：
 
 - `NewSession` - Lambda 支援 session，當新的 session 啟動會觸發此事件，通常這就是在使用者對 Alexa 說出第一句話的時候會發生。
 - Intent Request - 也就是 Intent 的事件，也是最重要、最常處理事件，事件的名字會與 Intent 的名稱相同，所以接下來我們會註冊一個 handler 叫做 `AddPaymentIntent`
 - `SessionEndedRequest` - 當對話結束的時候會發生此事件。它和其他事件有點不同的地方是它只是一個「通知」給 skill code，讓它處理一些收尾或 log 的工作而已，在這個事件沒辦法在回應任何東西給使用者，所以也不需要在這個事件對使用者說掰掰。
 - `Unhandled` - 接著我們會看到，事件 handler 是好幾個包在一個物件一起註冊，如果某個事件發生了，但在這個物件內卻找不到名稱相符的 handler，就會嘗試丟給 `Unhandled` 的 handler，萬一連 `Unhandled` 都沒有的話，會拋出例外。
 
-用一個物件把 handlers 裝起來：
+實作上，用一個物件把 handlers 裝起來：
 
 ```js
 var handlers = {
@@ -116,15 +116,107 @@ var handlers = {
 };
 ```
 
-然後一起註冊：
+然後整個物件一起註冊，註冊之後便執行：
 
 ```js
   exports.handler = function(event, context, callback) {
       var alexa = Alexa.handler(event, context, callback);
       alexa.registerHandlers(handlers);
+      alexa.execute();
   };
 ```
 
+雛型有了，接下來可以實作記帳的功能。
+
 #### 處理 AddPaymentIntent 
 
+來實作第一個 intent: `AddPaymentIntent`，首先取出使用者要記帳的金額：
 
+```js
+'AddPaymentIntent': function () {
+    var payment = parseInt(this.event.request.intent.slots.payment.value);
+}
+```
+嗯... 它位在 `event` 物件相當深的地方：event->request->intent->slots。Slot 的 `value` 型別都是 `string`，必須自行轉成 `number`。接下來就可以儲存帳款。為簡化這個範例，使用者紀錄的帳款先簡單放在記憶體就好。我們可以新增一個全域物件：
+
+```js
+var data = {
+  payment: 0
+};
+```
+
+接下來就可以儲存並回應囉：
+
+```js
+'AddPaymentIntent': function () {
+    var payment = parseInt(this.event.request.intent.slots.payment.value);
+    data.payment += payment;
+    this.emit(":tell", payment + " dollar payment is added");
+}
+```
+
+這裡的 `this.emit` 是 alexa-sdk 提供的 API，用來回應給使用者。最常用的兩個 API 是：
+
+- `this.emit(':tell', speechOutput);`     
+- `this.emit(':ask', speechOutput, speechOutput);`
+
+這兩個 API 都用來回應語音給使用者，最重要的差別是 `:tell` 會結束 session，它告訴使用者一句話之後就結束 skill 了；而 `:ask` 則讓使用者留在 skill 裡，不結束 session，從字面上來說就是 skill 詢問了使用者某個問題，然後等待著使用者的回應。另一個差別是 `:ask` 使用兩個參數，那它實際的行為是 skill 先用第一句話 `speechOutput` 詢問使用者，並開始等待，如果使用者思考太久沒回答，8 秒鐘之後 skill 會問第二句話 `speechOutput`，然後再等待 8 秒鐘。
+
+> 注意：8 秒鐘是 Alexa 一個特別的限制，如果使用者在 8 秒內沒有回應，那 skill 會關掉；如果使用者說的話超過 8 秒，那超過的部分也會被 Alexa 切掉，也就是它聽不到。
+
+好了，完成！就這樣，Bill Man Skill 會記帳了。不過好像也太沒用了，記完帳總要有辦法查詢吧！的確，那我們來新增一個查詢帳款的 Intent。
+
+#### 擴充更多 Intent
+
+現在來看看怎麼擴充更多 Intent，讓 Bill Man 越來越有用。擴充 intent 的時候，也是以相同的節奏進行：
+
+1. 首先設計對話劇本 - 劇本永遠是最重要、最基本的，先設想對話要怎麼進行、要怎麼盡量貼近自然，然後 Intent 和 Sample Utterances 就會自然發展出來
+2. 接著才是 skill code - 當進入 Intent 的 handler，實作起來就跟一般在實作應用程式差不多了。
+
+好，那就先思考劇本。我們可以再參考一下 OurGroceries。對話就這樣進行好了：
+
+*"Alexa, ask Bill Man what are my payment"*     
+*"Your total payment is 1024 dollar"*
+
+新的 Intent 就叫做 `QueryPaymentIntent` 吧，接著準備 Sample Utterances，越多越好：
+
+```
+QueryPaymentIntent what are my payment
+QueryPaymentIntent how much did I pay
+QueryPaymentIntent how much did I spend
+```
+
+然後在 intent schema 新增 `QueryPaymentIntent`，它沒有使用 slot：
+
+```js
+{
+  "intents": [
+    {
+      "slots": [
+        {
+          "name": "payment",
+          "type": "AMAZON.NUMBER"
+        }
+      ],
+      "intent": "AddPaymentIntent"
+    },
+    {
+      "intent": "QueryPaymentIntent"
+    }
+  ]
+}
+```
+
+更新 skill 的 Interaction Models。最後實作 `QueryPaymentIntent` 的 handler：
+
+```js
+'QueryPaymentIntent': function () {
+    this.emit(":tell", "Your total payment is " + data.payment + " dollar");
+}
+```
+
+只要將累積的金額組成句子就行了，非常容易。
+
+## 結論
+
+目前為止的介紹，可以讓 Custom Skill 的初學者快速入門，相比其他語言或 framework，要編寫第一個 Custom Skill 所需的前提條件、設定、註冊的帳號等等都相當多，那些囉嗦的設定官方已經有不少 [step by step](https://developer.amazon.com/blogs/post/TxKALMUNLHZPAP/New-Alexa-Skills-Kit-Template-Step-by-Step-Guide-to-Build-a-How-To-Skill) 類型的文章交大家怎麼做的，這裡就不再寫，而是把重點擺在如何設計對話劇本，然後發展出 Intent 與 Sample Utterances，最後撰寫 skill code。感謝您閱讀到此！
