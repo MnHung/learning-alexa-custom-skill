@@ -4,7 +4,7 @@
 
 看看下面的簡單對答，背後是如何達成的呢？
 
-使用者說：*"Alexa, ask Greeter to say Hello"*   
+使用者說：*"Alexa, ask Greeter to say Hello"*    
 Echo 說：*"Hello"*
 
 這段對答必須經過這些路徑：
