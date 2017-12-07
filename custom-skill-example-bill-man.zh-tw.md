@@ -25,7 +25,7 @@ AddPaymentIntent add a 200 dollar payment
 AddPaymentIntent add a {payment} dollar payment
 ```
 
-Intent 的格式就是這樣，開頭先是 intent 名，命名慣例是大寫 camel。空一格之後是 utterance。使用者可能會多種方式表達這個 intent，所以我們也應該多準備一些 sample utterances：
+Intent 的規定的格式，開頭先是 intent 名稱，命名慣例是大寫 camel。空一格之後是 utterance。使用者可能會多種方式表達這個 intent，所以我們也應該多準備一些 sample utterances：
 
 ```
 AddPaymentIntent add a {payment} dollar payment
@@ -33,13 +33,13 @@ AddPaymentIntent record a {payment} dollar payment
 AddPaymentIntent I paid {payment} dollar
 ```
 
-這樣使用者就可以換不同的說法來記帳，像是 *"Alexa, ask Bill Man to record a 15 dollar payment"* 或者 *"Alexa, tell Bill Man that I paid 100 dollar"*
+這樣使用者可以換不同的說法來記帳，像是 *"Alexa, ask Bill Man to record a 15 dollar payment"* 或者 *"Alexa, tell Bill Man that I paid 100 dollar"*
 
 #### Intent Schema 與 Sample Utterances
 
 現在你可以去[建立一個新的 Alexa Skill](https://developer.amazon.com/edw/home.html#/skill/create/) 了。**Invocation name** 裡填入 `Bill Man`，然後在 **Interaction Model** 頁籤裡面來填入 Intent 與 Utterances。在這裡必須寫成 Alexa Custom 所要求的格式，至少需要填寫兩部分：Intent Schema 與 Sample Utterances。
 
-**Intent Schema** 採用 JSON 格式，記錄了用到的 Intent 與 slot，對記帳的劇本來說，只要照著格式改寫：
+**Intent Schema** 採用 JSON 格式，記錄了用到的 Intent 與 slot，對記帳師的劇本來說，只要照著格式改寫：
 
 ```js
 {
@@ -73,7 +73,7 @@ AddPaymentIntent I paid {payment} dollar
 
 ### Lambda
 
-以 Node.js 版本來說，Lambda 就是一支 aws 上的 Node.js 程式，但它畢竟在 aws 裡面，所以有個 trigger 必須選。給 Custom Skill 使用的 Lambda 要選擇的 trigger 是 *Alexa Skills Kit*。
+Node.js 版本的 Lambda 其實就是一支 aws 上的 Node.js 程式，但它畢竟在 aws 裡面，所以有個 trigger 必須選。給 Custom Skill 使用的 Lambda 要選擇的 trigger 是 *Alexa Skills Kit*。
 
 用 Node.js 開發 skill code 可以使用 [Alexa Skills Kit SDK for Node.js](https://github.com/alexa/alexa-skills-kit-sdk-for-nodejs)，首先當然是安裝它：
 
@@ -90,7 +90,7 @@ exports.handler = function(event, context, callback){
     var alexa = Alexa.handler(event, context, callback);
 };
 ```
-> 選擇 index 這個檔名與 handler 這個 function 名稱，是因為要搭配 Lambda 的 **handler** 設定值，它預設是 *index.handler*。如果你想要選用別的名稱，記得  **handler** 設定值也要一起改。
+> 選擇 index 這個檔名與 handler 這個 function 名稱，是因為要搭配 Lambda 的 **handler** 設定值，它預設是 *index.handler*。如果你想要選用別的名稱，記得 **handler** 設定值也要一起改。
 
 如此會初始 `Alexa` 物件。接下來要編寫、並註冊 handlers。
 
@@ -155,12 +155,12 @@ var data = {
 }
 ```
 
-這裡的 `this.emit` 是 alexa-sdk 提供的 API，用來回應給使用者。最常用的兩個 API 是：
+這裡的 `this.emit` 是 alexa-sdk 的 API，用來回應給使用者。最常用的兩個 API 是：
 
 - `this.emit(':tell', speechOutput);`     
-- `this.emit(':ask', speechOutput, speechOutput);`
+- `this.emit(':ask', speechOutput, repromptSpeech);`
 
-這兩個 API 都用來回應語音給使用者，最重要的差別是 `:tell` 會結束 session，它告訴使用者一句話之後就結束 skill 了；而 `:ask` 則讓使用者留在 skill 裡，不結束 session，從字面上來說就是 skill 詢問了使用者某個問題，然後等待著使用者的回應。另一個差別是 `:ask` 使用兩個參數，那它實際的行為是 skill 先用第一句話 `speechOutput` 詢問使用者，並開始等待，如果使用者思考太久沒回答，8 秒鐘之後 skill 會問第二句話 `speechOutput`，然後再等待 8 秒鐘。
+這兩個 API 都用來回應語音給使用者，最重要的差別是 `:tell` 會結束 session，skill 說完一句話之後就結束了；而 `:ask` 則讓使用者留在 skill 裡，不結束 session，從字面上來說就是 skill 詢問了使用者某個問題，然後等待著使用者的回應。另一個差別是 `:ask` 使用兩個參數，它實際的行為是 skill 先說出第一句話 `speechOutput` 來詢問使用者，並開始等待，如果使用者思考太久沒回答，8 秒鐘之後 skill 會問第二句話 `repromptSpeech`，然後再等待 8 秒鐘。
 
 > 注意：8 秒鐘是 Alexa 一個特別的限制，如果使用者在 8 秒內沒有回應，那 skill 會關掉；如果使用者說的話超過 8 秒，那超過的部分也會被 Alexa 切掉，也就是它聽不到。
 
@@ -175,7 +175,7 @@ var data = {
 
 好，那就先思考劇本。我們可以再參考一下 OurGroceries。對話就這樣進行好了：
 
-*"Alexa, ask Bill Man what are my payment"*     
+*"Alexa, ask Bill Man what are my payment"*      
 *"Your total payment is 1024 dollar"*
 
 新的 Intent 就叫做 `QueryPaymentIntent` 吧，接著準備 Sample Utterances，越多越好：
@@ -186,7 +186,7 @@ QueryPaymentIntent how much did I pay
 QueryPaymentIntent how much did I spend
 ```
 
-然後在 intent schema 新增 `QueryPaymentIntent`，它沒有使用 slot：
+然後在 intent schema 新增 `QueryPaymentIntent`，它沒有 slot：
 
 ```js
 {
@@ -219,4 +219,4 @@ QueryPaymentIntent how much did I spend
 
 ## 結論
 
-目前為止的介紹，可以讓 Custom Skill 的初學者快速入門，相比其他語言或 framework，要編寫第一個 Custom Skill 所需的前提條件、設定、註冊的帳號等等都相當多，那些囉嗦的設定官方已經有不少 [step by step](https://developer.amazon.com/blogs/post/TxKALMUNLHZPAP/New-Alexa-Skills-Kit-Template-Step-by-Step-Guide-to-Build-a-How-To-Skill) 類型的文章交大家怎麼做的，這裡就不再寫，而是把重點擺在如何設計對話劇本，然後發展出 Intent 與 Sample Utterances，最後撰寫 skill code。感謝您閱讀到此！
+目前為止的介紹，可以讓 Custom Skill 的初學者快速入門，相比其他語言或 framework，要編寫第一個 Custom Skill 所需的前提條件、設定、註冊的帳號等等都相當多，那些囉嗦的設定官方已經有不少 [step by step](https://developer.amazon.com/blogs/post/TxKALMUNLHZPAP/New-Alexa-Skills-Kit-Template-Step-by-Step-Guide-to-Build-a-How-To-Skill) 類型的文章教大家怎麼做，這裡不再重複，而是把重點擺在如何設計對話劇本，接著發展出 Intent 與 Sample Utterances，最後撰寫 skill code。感謝您閱讀到此！
