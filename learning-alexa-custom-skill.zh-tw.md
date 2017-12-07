@@ -41,7 +41,7 @@ Invocation name 是用來對映 skill 用的，也就是告訴 Alexa，使用者
  - Invocation phrase（喚醒語句） - tell ... to ...
  - **Intent**（意圖） - remove olive oil from Walmart
  - **Slot**：其中 intent 中又包含一個 slot - Walmart
-  
+
 粗體字的 **Invocation name**、**Intent** 與 **Slot** 是 Alexa Skill 的專有名詞，其中 **Intent** 與 **Slot** 是組成一個 Skill 的重點。
 
 ### Invocation phrase
